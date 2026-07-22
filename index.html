@@ -237,23 +237,27 @@
   document.querySelectorAll('[data-ig]').forEach(a=>{a.href=CONFIG.instagramUrl;a.target="_blank";a.rel="noopener noreferrer";});
   document.querySelectorAll('[data-bases]').forEach(a=>{a.href=CONFIG.basesUrl;a.target="_blank";a.rel="noopener noreferrer";});
 
+  // Mostrar el contenido (esto es lo que fallaba antes)
+  const rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!rm && 'IntersectionObserver' in window){
+    const io = new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
+    document.querySelectorAll('.rev').forEach(el=>io.observe(el));
+  } else {
+    document.querySelectorAll('.rev').forEach(el=>el.classList.add('in'));
+  }
+
+  // Countdown al 4 de agosto
+  const dEl=document.getElementById('cd-d'), hEl=document.getElementById('cd-h'), mEl=document.getElementById('cd-m'), sEl=document.getElementById('cd-s');
   const target=new Date("2026-08-04T00:00:00-03:00").getTime();
-  const E={d:cd_d,h:cd_h,m:cd_m,s:cd_s};
   function tick(){
     const f=target-Date.now();
     if(f<=0){document.getElementById('count').innerHTML='<div class="clab" style="font-size:1rem;color:#fff">¡El concurso ya arrancó! Votá en Instagram 🎉</div>';return;}
-    E.d.textContent=Math.floor(f/864e5);
-    E.h.textContent=String(Math.floor(f%864e5/36e5)).padStart(2,'0');
-    E.m.textContent=String(Math.floor(f%36e5/6e4)).padStart(2,'0');
-    E.s.textContent=String(Math.floor(f%6e4/1e3)).padStart(2,'0');
+    dEl.textContent=Math.floor(f/864e5);
+    hEl.textContent=String(Math.floor(f%864e5/36e5)).padStart(2,'0');
+    mEl.textContent=String(Math.floor(f%36e5/6e4)).padStart(2,'0');
+    sEl.textContent=String(Math.floor(f%6e4/1e3)).padStart(2,'0');
   }
-  tick();setInterval(tick,1000);
-
-  const rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(!rm&&'IntersectionObserver'in window){
-    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
-    document.querySelectorAll('.rev').forEach(el=>io.observe(el));
-  }else{document.querySelectorAll('.rev').forEach(el=>el.classList.add('in'));}
+  tick(); setInterval(tick,1000);
 </script>
 </body>
 </html>
